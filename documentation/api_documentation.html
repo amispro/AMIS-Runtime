@@ -295,6 +295,27 @@
 </div>
 <br/>
 <div>
+<p><strong>part_center</strong></p>
+<p>Center the specified part in the active batch.</p>
+<h3>Parameters</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
+<tr>
+<td>part_number</td>
+<td>string</td>
+<td>The part number of the part to center.</td>
+<td><i>required</i></td>
+</tr>
+<tr>
+<td>instance_idx</td>
+<td>number</td>
+<td>Zero-based index of the instance to center, if not specified, all instances will be centered.</td>
+<td><i>optional</i></td>
+</tr>
+</table>
+</div>
+<br/>
+<div>
 <p><strong>part_delete</strong></p>
 <p>Delete the specified part from the batch.</p>
 <h3>Parameters</h3>
@@ -305,6 +326,12 @@
 <td>string</td>
 <td>The part number of the part to delete.</td>
 <td><i>required</i></td>
+</tr>
+<tr>
+<td>instance_idx</td>
+<td>number</td>
+<td>Zero-based index of the instance to delete, if not specified, all instances will be deleted.</td>
+<td><i>optional</i></td>
 </tr>
 </table>
 </div>
@@ -523,6 +550,21 @@
 </div>
 <br/>
 <div>
+<p><strong>part_show_log</strong></p>
+<p>Show the healer log entries for all meshes in the specified part.</p>
+<h3>Parameters</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
+<tr>
+<td>part_number</td>
+<td>string</td>
+<td>The part number of the part whose mesh log to display</td>
+<td><i>required</i></td>
+</tr>
+</table>
+</div>
+<br/>
+<div>
 <p><strong>slicer_execute</strong></p>
 <p>This action will slice the current batch. Depending on the output type, you need to specify a folder or a filepath as output location. Resolution and slice thickness are taken from the batch settings. When slicing to 3MF, the output file will use the 3MF Slice Extension for storing the slice information.</p>
 <h3>Parameters</h3>
@@ -554,6 +596,12 @@
 <td>string</td>
 <td>The path to the 3MF file to export to</td>
 <td><i>required</i></td>
+</tr>
+<tr>
+<td>hp_format</td>
+<td>boolean</td>
+<td>Set to true to export this file in the HP3MF format</td>
+<td>false</td>
 </tr>
 </table>
 </div>
@@ -588,7 +636,7 @@
 <tr>
 <td>part_list_format</td>
 <td>string</td>
-<td>The format to use for the parts list (csv or json)</td>
+<td>The format to use for the parts list ('csv', 'html' or 'json')</td>
 <td><i>required</i></td>
 </tr>
 <tr>
