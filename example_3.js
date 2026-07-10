@@ -30,13 +30,24 @@ input_list.forEach(element => {
 	amis.part_settings_save(element);
 });
 
-// Work in progress: get current state of the batch
-//var currentState = amis.returnCurrentState();
-//console.log(JSON.stringify(currentState));
+// Get current state of the batch
+var currentState = amis.returnCurrentState();
+
+// Loop over the unplaced parts and remember the part with the biggest box_area
+var biggestPart = null;
+Object.values(currentState.unplaced_parts).forEach(part => {
+	if (biggestPart === null || part.box_area > biggestPart.box_area) {
+		biggestPart = part;
+	}
+});
+
+// If we found a biggest part, center it and lock its position
+if (biggestPart !== null) {
+	amis.part_center({"part_number": biggestPart.part_number});
+	amis.part_settings_save({"part_number": biggestPart.part_number, "instance_idx": 0, "lock_position": true});
+}
 
 amis.nest_execute({"stop_at_iteration":100});
 amis.batch_save_as({"file_path":"Out/example_output_1.3mf"});
-amis.slicer_parts_list({"csv_file":"Out/example_output_1.csv"});
-amis.slicer_export_stl({"stl_file":"Out/example_output_1.stl"});
 
 amis.execute();
