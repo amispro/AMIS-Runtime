@@ -1,4 +1,4 @@
-var amis=require('./api/amis.js');
+var amis=require('../api/amis.js');
 var fs=require('fs');
 
 var input_list=[
