@@ -117,8 +117,27 @@ All API calls are **queued** and executed only when `amis.execute()` is called. 
 
 ## Execute your script
 
-Navigate to the runtime folder where your script is located and execute it using node:
+Navigate to the folder where your script is located and execute it using node:
 
 ```bash
 node example_1.js
 ```
+
+## Examples
+
+Beginner scripts live under `examples/`, grouped by theme:
+
+| Theme | Folder | Covers |
+|-------|--------|--------|
+| Setup | `examples/Setup/` | Create/open a batch, import STL or 3MF, save, move unplaced parts |
+| Parts | `examples/Parts/` | Scale, rotate, reset rotation, position, center |
+| Output | `examples/Output/` | Export as 3MF or STL |
+
+Run each script from its theme folder so the relative `../In` and `../Out` paths resolve correctly:
+
+```bash
+cd examples/Setup
+node import_single_stl_and_save.js
+```
+
+The full function reference is in `documentation/api_documentation.html`.
