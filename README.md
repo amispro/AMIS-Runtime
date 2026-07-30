@@ -131,7 +131,8 @@ Beginner scripts live under `examples/`, grouped by theme:
 |-------|--------|--------|
 | Setup | `examples/Setup/` | Create/open a batch, import STL or 3MF, save, move unplaced parts |
 | Parts | `examples/Parts/` | Scale, rotate, reset rotation, position, center |
-| Output | `examples/Output/` | Export as 3MF or STL |
+| Nesting | `examples/Nesting/` | Default nest, gaps, density, height limit, lock, clear, priority, boxing |
+| Output | `examples/Output/` | Export as 3MF, STL, or HTML parts list |
 
 Run each script from its theme folder so the relative `../In` and `../Out` paths resolve correctly:
 

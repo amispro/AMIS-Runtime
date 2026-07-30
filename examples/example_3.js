@@ -4,15 +4,15 @@ var fs=require('fs');
 var input_list=[
 	{
 		part_number: "Part_A",
-		file_path:"In/brakedisk.stl",
+		file_path:"In/L_hydroponics-Pump-Connector.STL",
 		copies:1
 	},
-	{
+    {
 		part_number: "Part_B",
-		file_path:"In/caliper.stl",
+		file_path:"In/spring.stl",
 		allow_z_rotation:true,
 		rotation_x:45,
-		copies:20
+		copies:8
 	}
 ];
 

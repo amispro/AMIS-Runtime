@@ -46,6 +46,6 @@ if (parts["batch"]["nesting_density"] > 0.15) {
 	console.log("Nesting density is acceptable: " + parts["batch"]["nesting_density"]);
 }
 
-// Might not even be necessary
+// Only needed when this script runs alone; skip if it's part of a larger script sequence
 amis.execute();
 	
