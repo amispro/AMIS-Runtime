@@ -43,12 +43,14 @@ function initialize(pApplicationPath)
 function execute()
 {
 	const fs = require('node:fs');
-	fs.writeFileSync('execute.rec', mList);	
-	const command= amis_cmd+ ' replay execute.rec';
+	const crypto = require('node:crypto');
+	const recFile = 'execute_' + crypto.randomUUID() + '.rec';
+	fs.writeFileSync(recFile, mList);	
+	const command= amis_cmd+ ' replay ' + recFile;
 	const execSync = require("child_process").execSync;
 	const result = execSync(command);
 	console.log(result.toString("utf8"));
-	fs.unlinkSync('execute.rec');
+	fs.unlinkSync(recFile);
 	mList="";
 }
 
