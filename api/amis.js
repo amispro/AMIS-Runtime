@@ -11,6 +11,7 @@ module.exports = {
 	batch_save_as:function(){addline(arguments.callee.name,arguments[0]);},
 	batch_settings_save:function(){addline(arguments.callee.name,arguments[0]);},
 	batch_unplaced:function(){addline(arguments.callee.name,arguments[0]);},
+	mesh_orient:function(){addline(arguments.callee.name,arguments[0]);},
 	nest_box_parts:function(){addline(arguments.callee.name,arguments[0]);},
 	nest_clear:function(){addline(arguments.callee.name,arguments[0]);},
 	nest_delete_unplaced:function(){addline(arguments.callee.name,arguments[0]);},

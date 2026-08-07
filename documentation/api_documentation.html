@@ -152,6 +152,21 @@
 </div>
 <br/>
 <div>
+<p><strong>mesh_orient</strong></p>
+<p>Rotate the specified part so the volume of its axis aligned bounding box is as small as possible.</p>
+<h3>Parameters</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
+<tr>
+<td>part_number</td>
+<td>string</td>
+<td>The part number of the part to orient.</td>
+<td><i>required</i></td>
+</tr>
+</table>
+</div>
+<br/>
+<div>
 <p><strong>nest_box_parts</strong></p>
 <p>This function will create a sinterbox around the currently selected parts.</p>
 <h3>Parameters</h3>
@@ -285,6 +300,12 @@
 <td>double</td>
 <td>The maximum height to use for nesting (0 = use entire buildbox)</td>
 <td>0.0</td>
+</tr>
+<tr>
+<td>nest_spread_parts</td>
+<td>bool</td>
+<td>Enable spreading of parts in the build box to reduce density</td>
+<td>false</td>
 </tr>
 </table>
 </div>
