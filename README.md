@@ -142,3 +142,7 @@ node import_single_stl_and_save.js
 ```
 
 The full function reference is in `documentation/api_documentation.html`.
+
+## Model Context Protocol (MCP) Server
+
+`mcp-server/` contains an MCP server that exposes the AMIS Runtime API as tools for AI agents. See [`mcp-server/README.md`](mcp-server/README.md) for setup and usage.
