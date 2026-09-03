@@ -191,6 +191,11 @@ registerQueuedTool('part_center', 'Center the specified part in the active batch
 	instance_idx: z.number().int().optional().describe('Zero-based index of the instance to center; if omitted, all instances will be centered')
 });
 
+registerQueuedTool('part_change_name', 'Change the name of the specified part or partgroup. When part_number refers to a sub-part of a partgroup, only that sub-part is renamed.', {
+	part_number: z.string().describe('The part number (uuid) of the part, partgroup or sub-part to rename'),
+	name: z.string().describe('The new name to assign')
+});
+
 registerQueuedTool('part_delete', 'Delete the specified part from the batch.', {
 	part_number: z.string().describe('The part number of the part to delete'),
 	instance_idx: z.number().int().optional().describe('Zero-based index of the instance to delete; if omitted, all instances will be deleted')
@@ -201,14 +206,25 @@ registerQueuedTool('part_duplicate', 'Create a copy of the selected part with th
 	new_part_number: z.string().optional().describe('The part number to assign to the duplicated part (optional, auto-assigned if omitted)')
 });
 
+registerQueuedTool('part_group', 'Group all currently selected parts into a new PartGroup. Disabled when no parts are selected or when at least one selected part is already a group.', {
+	part_numbers: z.array(z.string()).optional().describe('Part numbers of the parts to group (default: [])')
+});
+
 registerQueuedTool('part_import', 'Import one or more parts into the current build area from STL, STEP or 3MF files. Imported parts are automatically repaired and prepared for nesting. If part_number is already in use, the import will fail for that part.', {
 	file_path: z.string().describe('The file path of the part to import'),
 	part_number: z.string().optional().describe('The part number to assign to the imported part (optional, auto-assigned if omitted)')
 });
 
-registerQueuedTool('part_priority', 'Set the nesting priority of the selected parts. Parts with a higher priority will be favored during the nesting process.', {
+registerQueuedTool('part_lock', 'Lock the position of all instances of the currently selected parts that are placed inside the build box. Locked parts cannot be moved or modified until unlocked, and stay in place during subsequent nesting operations.', {
+	part_numbers: z.array(z.string()).describe('The part numbers of the parts to lock')
+});
+
+registerQueuedTool('part_priority', 'Set the nesting priority of the selected part. Parts with a higher priority will be favored during the nesting process.', {
+	part_number: z.string().describe('The part number of the part to modify'),
 	priority_value: z.number().int().min(0).max(100).optional().describe('The priority value to set for the selected parts, 0-100 (default: 50)')
 });
+
+registerQueuedTool('part_repair', 'Run the MeshHealer repair pipeline on every model of the selected part, attempting to turn its mesh(es) into a closed, watertight, 2-manifold mesh. If a mesh cannot be fully repaired, it is flagged for alpha-wrapping instead.', {});
 
 registerQueuedTool('part_settings_save', 'Save part settings such as rotation, scaling, copies, nesting behavior, and (optionally, via instance_idx) a specific instance\'s position and lock state. Optional values left out remain unchanged.', {
 	part_number: z.string().describe('The part number of the part to modify'),
@@ -243,18 +259,30 @@ registerQueuedTool('part_show_log', 'Show the healer log entries for all meshes 
 	part_number: z.string().describe('The part number of the part whose mesh log to display')
 });
 
+registerQueuedTool('part_split', 'Split the selected part into a new PartGroup, with one sub-part for each connected component (edge-connected set of triangles) found in the part\'s mesh. All instances of the original part are moved to the resulting group. If the part\'s mesh is already a single connected component, a dialog informs the user instead of performing the split.', {
+	part_number: z.string().describe('The part number of the part to split')
+});
+
+registerQueuedTool('part_ungroup', 'Dissolve all currently selected PartGroups, releasing each subpart back into the batch at its current world position. Disabled when no groups are selected.', {
+	part_numbers: z.array(z.string()).optional().describe('Part numbers of the groups to ungroup (default: [])')
+});
+
+registerQueuedTool('part_unlock', 'Unlock all instances of the currently selected parts that are locked in position inside the build box, allowing them to be moved again. Initiating a nesting will cause these parts to be renested as a consequence.', {
+	part_numbers: z.array(z.string()).describe('The part numbers of the parts to unlock')
+});
+
 registerQueuedTool('slicer_execute', 'Slice the current batch. Resolution and slice thickness are taken from the batch settings. Depending on output_type, output_location must be a folder (tiff) or a file path (svg, cli, sli, 3mf).', {
 	output_type: z.enum(['tiff', 'svg', 'cli', 'sli', '3mf']).optional().describe('Type of output to generate (default: "tiff")'),
 	output_location: z.string().describe('The output location for the sliced files (folder for tiff, filepath for others)')
 });
 
 registerQueuedTool('slicer_export_3mf', 'Export the current batch as a 3MF file for use in other slicing applications. Parts outside the batch are not saved and metadata is stripped.', {
-	'3mf_file': z.string().describe('The path to the 3MF file to export to'),
-	hp_format: z.boolean().optional().describe('Set to true to export this file in the HP3MF format (default: false)')
+	'3mf_file': z.string().describe('The path to the 3MF file to export to')
 });
 
 registerQueuedTool('slicer_export_stl', 'Export the complete batch as a single STL file for use in other slicing applications.', {
-	stl_file: z.string().describe('The path to the STL file to export to')
+	stl_file: z.string().describe('The path to the STL file to export to'),
+	multi: z.boolean().optional().describe('If true, export each part as a separate STL file (default: false)')
 });
 
 registerQueuedTool('slicer_parts_list', 'Export a file containing the list of parts in the current batch along with their dimensions and volumes.', {
