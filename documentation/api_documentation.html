@@ -337,6 +337,27 @@
 </div>
 <br/>
 <div>
+<p><strong>part_change_name</strong></p>
+<p>This action will change the name of the specified part or partgroup. When the id refers to a sub-part of a partgroup, only that sub-part is renamed.</p>
+<h3>Parameters</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
+<tr>
+<td>part_number</td>
+<td>string</td>
+<td>The part number (uuid) of the part, partgroup or sub-part to rename</td>
+<td><i>required</i></td>
+</tr>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>The new name to assign</td>
+<td><i>required</i></td>
+</tr>
+</table>
+</div>
+<br/>
+<div>
 <p><strong>part_delete</strong></p>
 <p>Delete the specified part from the batch.</p>
 <h3>Parameters</h3>
@@ -379,6 +400,21 @@
 </div>
 <br/>
 <div>
+<p><strong>part_group</strong></p>
+<p>Groups all currently selected parts into a new PartGroup. The action is disabled when no parts are selected or when at least one selected part is already a group.</p>
+<h3>Parameters</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
+<tr>
+<td>part_numbers</td>
+<td>array of strings</td>
+<td>Part numbers of the parts to group.</td>
+<td>[]</td>
+</tr>
+</table>
+</div>
+<br/>
+<div>
 <p><strong>part_import</strong></p>
 <p>Import one or more parts into the current build area from STL, STEP or 3MF files. The imported parts will be automatically repaired and prepared for nesting. It is possible to pass a part_number to the imported part to allow further operations on this part. If no part_number is given, one will be automatically assigned. When a part_number is specified and it is already in use, the import will fail for that part.</p>
 <h3>Parameters</h3>
@@ -400,11 +436,32 @@
 </div>
 <br/>
 <div>
+<p><strong>part_lock</strong></p>
+<p>This action will lock the position of all instances of the currently selected parts that are placed inside the build box. Locked parts cannot be moved or modified until they are unlocked again. They will also stay in their current position if a new nesting operation is performed.</p>
+<h3>Parameters</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
+<tr>
+<td>part_numbers</td>
+<td>array of strings</td>
+<td>The part numbers of the parts to lock.</td>
+<td><i>required</i></td>
+</tr>
+</table>
+</div>
+<br/>
+<div>
 <p><strong>part_priority</strong></p>
 <p>This action will set the nesting priority of the selected parts in a range of 0-100. Parts with a higher priority will be favored during the nesting process.</p>
 <h3>Parameters</h3>
 <table>
 <tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
+<tr>
+<td>part_number</td>
+<td>string</td>
+<td>The part number of the part to modify</td>
+<td><i>required</i></td>
+</tr>
 <tr>
 <td>priority_value</td>
 <td>integer</td>
@@ -412,6 +469,11 @@
 <td>50</td>
 </tr>
 </table>
+</div>
+<br/>
+<div>
+<p><strong>part_repair</strong></p>
+<p>Runs the MeshHealer repair pipeline on every model of the selected part, attempting to turn its mesh(es) into a closed, watertight, 2-manifold mesh. If a mesh cannot be fully repaired, it is flagged for alpha-wrapping instead.</p>
 </div>
 <br/>
 <div>
@@ -586,6 +648,51 @@
 </div>
 <br/>
 <div>
+<p><strong>part_split</strong></p>
+<p>Splits the selected part into a new PartGroup, with one sub-part for each connected component (edge-connected set of triangles) found in the part's mesh. All instances of the original part are moved to the resulting group. If the part's mesh is already a single connected component, a dialog informs the user instead of performing the split.</p>
+<h3>Parameters</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
+<tr>
+<td>part_number</td>
+<td>string</td>
+<td>The part number of the part to split.</td>
+<td><i>required</i></td>
+</tr>
+</table>
+</div>
+<br/>
+<div>
+<p><strong>part_ungroup</strong></p>
+<p>Dissolves all currently selected PartGroups, releasing each subpart back into the batch at its current world position. The action is disabled when no groups are selected.</p>
+<h3>Parameters</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
+<tr>
+<td>part_numbers</td>
+<td>array of strings</td>
+<td>Part numbers of the groups to ungroup.</td>
+<td>[]</td>
+</tr>
+</table>
+</div>
+<br/>
+<div>
+<p><strong>part_unlock</strong></p>
+<p>This action will unlock all instances of the currently selected parts that are locked in position inside the build box, allowing them to be moved again. Initiating a nesting will cause these parts to be renested as a consequence.</p>
+<h3>Parameters</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
+<tr>
+<td>part_numbers</td>
+<td>array of strings</td>
+<td>The part numbers of the parts to unlock.</td>
+<td><i>required</i></td>
+</tr>
+</table>
+</div>
+<br/>
+<div>
 <p><strong>slicer_execute</strong></p>
 <p>This action will slice the current batch. Depending on the output type, you need to specify a folder or a filepath as output location. Resolution and slice thickness are taken from the batch settings. When slicing to 3MF, the output file will use the 3MF Slice Extension for storing the slice information.</p>
 <h3>Parameters</h3>
@@ -618,12 +725,6 @@
 <td>The path to the 3MF file to export to</td>
 <td><i>required</i></td>
 </tr>
-<tr>
-<td>hp_format</td>
-<td>boolean</td>
-<td>Set to true to export this file in the HP3MF format</td>
-<td>false</td>
-</tr>
 </table>
 </div>
 <br/>
@@ -638,6 +739,12 @@
 <td>string</td>
 <td>The path to the STL file to export to</td>
 <td><i>required</i></td>
+</tr>
+<tr>
+<td>multi</td>
+<td>bool</td>
+<td>If true, export each part as a separate STL file</td>
+<td>false</td>
 </tr>
 </table>
 </div>

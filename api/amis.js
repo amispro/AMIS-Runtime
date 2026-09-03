@@ -20,17 +20,24 @@ module.exports = {
 	nest_settings_save:function(){addline(arguments.callee.name,arguments[0]);},
 	nest_unlock:function(){addline(arguments.callee.name,arguments[0]);},
 	part_center:function(){addline(arguments.callee.name,arguments[0]);},
+	part_change_name:function(){addline(arguments.callee.name,arguments[0]);},
 	part_delete:function(){addline(arguments.callee.name,arguments[0]);},
 	part_duplicate:function(){addline(arguments.callee.name,arguments[0]);},
+	part_group:function(){addline(arguments.callee.name,arguments[0]);},
 	part_import:function(){addline(arguments.callee.name,arguments[0]);},
+	part_lock:function(){addline(arguments.callee.name,arguments[0]);},
 	part_priority:function(){addline(arguments.callee.name,arguments[0]);},
+	part_repair:function(){addline(arguments.callee.name,arguments[0]);},
 	part_settings_save:function(){addline(arguments.callee.name,arguments[0]);},
 	part_shelling_execute:function(){addline(arguments.callee.name,arguments[0]);},
 	part_show_log:function(){addline(arguments.callee.name,arguments[0]);},
+	part_split:function(){addline(arguments.callee.name,arguments[0]);},
+	part_ungroup:function(){addline(arguments.callee.name,arguments[0]);},
+	part_unlock:function(){addline(arguments.callee.name,arguments[0]);},
 	slicer_execute:function(){addline(arguments.callee.name,arguments[0]);},
 	slicer_export_3mf:function(){addline(arguments.callee.name,arguments[0]);},
 	slicer_export_stl:function(){addline(arguments.callee.name,arguments[0]);},
-	slicer_parts_list:function(){addline(arguments.callee.name,arguments[0]);}
+  slicer_parts_list:function(){addline(arguments.callee.name,arguments[0]);}
 };
 
 var amis_cmd='"/Applications/AMIS Pro.app/Contents/MacOS/AMIS Pro"';
