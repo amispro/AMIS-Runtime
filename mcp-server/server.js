@@ -148,6 +148,8 @@ registerQueuedTool('batch_unplaced', 'Create a new batch containing all parts th
 	name: z.string().optional().describe('The name of the new batch file (default: empty)')
 });
 
+registerQueuedTool('link_hp_job_send', 'Send the current batch to the assigned HP MJF printer. This call fails if the assigned printer is not an HP printer.', {});
+
 registerQueuedTool('mesh_orient', 'Rotate the specified part so the volume of its axis aligned bounding box is as small as possible.', {
 	part_number: z.string().describe('The part number of the part to orient')
 });

@@ -11,6 +11,7 @@ module.exports = {
 	batch_save_as:function(){addline(arguments.callee.name,arguments[0]);},
 	batch_settings_save:function(){addline(arguments.callee.name,arguments[0]);},
 	batch_unplaced:function(){addline(arguments.callee.name,arguments[0]);},
+	link_hp_job_send:function(){addline(arguments.callee.name,arguments[0]);},
 	mesh_orient:function(){addline(arguments.callee.name,arguments[0]);},
 	nest_box_parts:function(){addline(arguments.callee.name,arguments[0]);},
 	nest_clear:function(){addline(arguments.callee.name,arguments[0]);},
@@ -37,7 +38,7 @@ module.exports = {
 	slicer_execute:function(){addline(arguments.callee.name,arguments[0]);},
 	slicer_export_3mf:function(){addline(arguments.callee.name,arguments[0]);},
 	slicer_export_stl:function(){addline(arguments.callee.name,arguments[0]);},
-  slicer_parts_list:function(){addline(arguments.callee.name,arguments[0]);}
+	slicer_parts_list:function(){addline(arguments.callee.name,arguments[0]);}
 };
 
 var amis_cmd='"/Applications/AMIS Pro.app/Contents/MacOS/AMIS Pro"';
