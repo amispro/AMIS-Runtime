@@ -21,7 +21,7 @@ if (!fs.existsSync("./Out")){
 }
 
 amis.initialize("/Applications/AMIS Pro.app/Contents/MacOS/AMIS Pro");
-// amis.initialize("C:\\Program Files\\AMIS Pro\\AMIS Pro.exe");
+// amis.initialize("C:\\Program Files\\AMIS Pro\\AMIS_Pro.exe");
 
 amis.batch_create({"batch_depth":284.0,"batch_height":380.0,"batch_name":"test_batch.3mf","batch_width":380.0});
 

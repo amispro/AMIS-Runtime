@@ -55,7 +55,7 @@ npm install
 Locate your AMIS Pro installation path:
 
 - **macOS**: `/Applications/AMIS Pro.app/Contents/MacOS/AMIS Pro`
-- **Windows**: `C:\Program Files\AMIS Pro\AMIS Pro.exe`
+- **Windows**: `C:\Program Files\AMIS Pro\AMIS_Pro.exe`
 
 You'll need this path to initialize the API in your scripts.
 
@@ -86,7 +86,7 @@ if (!fs.existsSync("./Out")) {
 }
 
 // Initialize AMIS Pro
-amis.initialize("C:\\Program Files\\AMIS Pro\\AMIS Pro.exe");
+amis.initialize("C:\\Program Files\\AMIS Pro\\AMIS_Pro.exe");
 
 // Create a new batch
 amis.batch_create({

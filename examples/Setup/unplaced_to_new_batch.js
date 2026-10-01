@@ -11,7 +11,7 @@ if (!fs.existsSync("../Out")) {
 
 // Initialize AMIS Pro
 amis.initialize("/Applications/AMIS Pro.app/Contents/MacOS/AMIS Pro");
-// amis.initialize("C:\\Program Files\\AMIS Pro\\AMIS Pro.exe");
+// amis.initialize("C:\\Program Files\\AMIS Pro\\AMIS_Pro.exe");
 
 // Create a small batch so not every copy will fit
 amis.batch_create({
