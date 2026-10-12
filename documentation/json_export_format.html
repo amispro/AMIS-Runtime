@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AMIS Slicer JSON Export – Format Documentation</title>
+<style>
+  body { font-family: -apple-system, Helvetica, Arial, sans-serif; max-width: 960px; margin: 2em auto; padding: 0 1em; color: #222; line-height: 1.5; }
+  h1, h2, h3 { border-bottom: 1px solid #ddd; padding-bottom: .2em; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: #f3f3f3; }
+  code, pre { font-family: Menlo, Consolas, monospace; font-size: 90%; background: #f6f6f6; }
+  code { padding: 1px 4px; border-radius: 3px; }
+  pre { padding: 1em; overflow-x: auto; border-radius: 4px; }
+  .note { background: #fff8e1; border-left: 4px solid #f5b800; padding: .5em 1em; margin: 1em 0; }
+</style>
+</head>
+<body>
+
+<h1>AMIS JSON Export Format</h1>
+<p>
+  This document describes the JSON file produced by the <code>JSON Export</code>.
+  It describes a nesting <em>batch</em>: the build volume, the distinct parts used, where every copy of each part is
+  placed, and which copies could not be placed (<em>unplaced</em>).
+</p>
+<p>All lengths are in millimetres, areas in mm², volumes in mm³ (the file itself does not store units).</p>
+
+<h2>1. Top-level structure</h2>
+<table>
+  <tr><th>Key</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>timestamp</code></td><td>string</td><td>Export time, local time, format <code>YYYY-MM-DD HH:MM:SS</code>.</td></tr>
+  <tr><td><code>batch</code></td><td>object</td><td>Batch-level (build volume and density) information. See <a href="#batch">section 2</a>.</td></tr>
+  <tr><td><code>parts</code></td><td>object</td><td>Map of part key → <a href="#part">part object</a> for parts that were successfully placed in the batch.</td></tr>
+  <tr><td><code>unplaced_parts</code></td><td>object</td><td>Optional (only present when requested by the user). Map of part key → <a href="#part">part object</a> for copies that did not fit in the batch. Same schema as <code>parts</code>.</td></tr>
+</table>
+<p>Keys are emitted in alphabetical order. The optional items (<code>unplaced_parts</code> and <code>batch.densities</code>) are only exported when requested by the user; consumers should treat them as empty when absent.</p>
+
+<h2 id="batch">2. <code>batch</code> object</h2>
+<table>
+  <tr><th>Key</th><th>Type</th><th>Example</th><th>Description</th></tr>
+  <tr><td><code>name</code></td><td>string</td><td><code>"partial_nest"</code></td><td>Name of the batch.</td></tr>
+  <tr><td><code>box_width</code></td><td>number</td><td>380.0</td><td>Build volume size along X.</td></tr>
+  <tr><td><code>box_depth</code></td><td>number</td><td>284.0</td><td>Build volume size along Y.</td></tr>
+  <tr><td><code>box_height</code></td><td>number</td><td>380.0</td><td>Build volume size along Z (maximum build height).</td></tr>
+  <tr><td><code>layer_height</code></td><td>number</td><td>0.1</td><td>Layer thickness used for slicing.</td></tr>
+  <tr><td><code>nesting_height</code></td><td>number</td><td>368.71</td><td>Actual height (Z extent) occupied by the nested parts; ≤ <code>box_height</code>.</td></tr>
+  <tr><td><code>nesting_density</code></td><td>number</td><td>0.4052</td><td>Fraction (0–1) of the volume up to <code>nesting_height</code> filled with part material.</td></tr>
+  <tr><td><code>total_density</code></td><td>number</td><td>0.3931</td><td>Fraction (0–1) of the entire build volume (<code>box_width × box_depth × box_height</code>) filled with part material. Always ≤ <code>nesting_density</code>.</td></tr>
+  <tr><td><code>densities</code></td><td>object</td><td><code>{"0.10": 0.0007, …}</code></td><td>Optional (only present when requested by the user). Density per layer height; see <a href="#densities">below</a>.</td></tr>
+</table>
+
+<h3 id="densities"><code>batch.densities</code> (optional)</h3>
+<p>Only exported when the user requests density information. It is a map from layer height to the density at that height:</p>
+<ul>
+  <li><strong>Key</strong>: string, the height in mm along Z, formatted with two decimals (e.g. <code>"0.10"</code>, <code>"263.40"</code>). Heights start at <code>layer_height</code> and increase in steps of <code>layer_height</code> up to <code>nesting_height</code>, so the map has about <code>nesting_height / layer_height</code> entries.</li>
+  <li><strong>Value</strong>: number (0–1), the fraction of the build-plate cross-section filled with part material at that height. It is not cumulative: it varies per layer and is small near the top of the nest, where only a few parts remain.</li>
+</ul>
+<p>Keys are strings and, like all keys, are emitted in alphabetical (lexicographic) order, not numeric order (<code>"0.10"</code>, <code>"0.20"</code>, …, <code>"1.00"</code>, <code>"1.10"</code>, …). Parse the keys as numbers and sort them if you need them in height order.</p>
+<pre>"densities": {
+    "0.10": 0.000708858,
+    "0.20": 0.002098776,
+    "0.30": 0.003488695,
+    ...
+}</pre>
+
+<h2 id="part">3. Part object (<code>parts.*</code> and <code>unplaced_parts.*</code>)</h2>
+<p>The map key (e.g. <code>"part_4"</code>) identifies a distinct part in the batch; it equals the <code>part_number</code> field. Several keys may share the same <code>name</code> (with different scale/size).</p>
+<table>
+  <tr><th>Key</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>part_number</code></td><td>string</td><td>Unique part identifier, same as the map key.</td></tr>
+  <tr><td><code>name</code></td><td>string</td><td>Name of the part (typically the source model name).</td></tr>
+  <tr><td><code>copies</code></td><td>integer</td><td>Number of copies; always equals the length of <code>instances</code>.</td></tr>
+  <tr><td><code>instances</code></td><td>array of arrays</td><td>One transformation per copy. See <a href="#instances">section 4</a>.</td></tr>
+  <tr><td><code>box_width</code></td><td>number</td><td>Bounding box size along X.</td></tr>
+  <tr><td><code>box_depth</code></td><td>number</td><td>Bounding box size along Y.</td></tr>
+  <tr><td><code>box_height</code></td><td>number</td><td>Bounding box size along Z.</td></tr>
+  <tr><td><code>box_area</code></td><td>number</td><td>Volume of the bounding box: <code>box_width × box_depth × box_height</code>.</td></tr>
+  <tr><td><code>surface_area</code></td><td>number</td><td>Surface area of the part mesh.</td></tr>
+  <tr><td><code>solid_volume</code></td><td>number</td><td>Volume of the solid part model.</td></tr>
+  <tr><td><code>printed_volume</code></td><td>number</td><td>Volume of material actually printed.</td></tr>
+</table>
+
+<h2 id="instances">4. <code>instances</code> – placement transforms</h2>
+<p>Each instance is an array of <strong>12 numbers</strong>: the top three rows of a 4×4 affine transformation matrix, in <strong>row-major</strong> order. The fourth row is implicitly <code>[0, 0, 0, 1]</code>.</p>
+<pre>[ m00, m01, m02, tx,
+  m10, m11, m12, ty,
+  m20, m21, m22, tz ]
+
+        | m00 m01 m02 tx |
+   M =  | m10 m11 m12 ty |
+        | m20 m21 m22 tz |
+        |  0   0   0   1 |</pre>
+<table>
+  <tr><th>Index</th><th>Meaning</th></tr>
+  <tr><td>0, 1, 2 / 4, 5, 6 / 8, 9, 10</td><td>3×3 rotation (and scale) part.</td></tr>
+  <tr><td>3, 7, 11</td><td>Translation <code>tx, ty, tz</code>.</td></tr>
+</table>
+<p>A point <code>p</code> of the part model is placed at <code>M · [p.x, p.y, p.z, 1]ᵀ</code>.</p>
+
+<h3>Placed vs. unplaced</h3>
+<ul>
+  <li><strong><code>parts</code></strong>: translations lie inside the build volume (e.g. <code>tx=314, ty=2, tz=298</code>, within 380 × 284 × 380).</li>
+  <li><strong><code>unplaced_parts</code></strong>: the instances are laid out on a staging grid outside the build volume. Their coordinates must not be interpreted as valid positions within the batch.</li>
+</ul>
+
+<h2>5. Example (abridged)</h2>
+<pre>{
+  "batch": {
+    "name": "partial_nest",
+    "box_width": 380.0, "box_depth": 284.0, "box_height": 380.0,
+    "layer_height": 0.1,
+    "nesting_height": 368.7106742949226,
+    "nesting_density": 0.4051612730001449,
+    "total_density": 0.39312443727913854
+  },
+  "parts": {
+    "part_4": {
+      "part_number": "part_4",
+      "name": "ShelID_version1_v1.4",
+      "copies": 36,
+      "box_width": 49.99, "box_depth": 70.71, "box_height": 70.71,
+      "box_area": 249999.95,
+      "surface_area": 14999.99,
+      "solid_volume": 94279.98,
+      "printed_volume": 94279.98,
+      "instances": [
+        [1,0,0,314,  0,1,0,2,  0,0,1,298],
+        [1,0,0,218,  0,1,0,78, 0,0,1,286]
+      ]
+    }
+  },
+  "unplaced_parts": {
+    "part_4": { "copies": 4, "instances": [ [1,0,0,165, 0,1,0,-90.7, 0,0,1,0] ], "...": "same fields as above" }
+  },
+  "timestamp": "2026-10-12 14:59:48"
+}</pre>
+
+
+</body>
+</html>

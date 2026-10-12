@@ -1,4 +1,11 @@
 <html><head><title>AMIS Runtime Documentation</title><link rel="stylesheet" href="amis_doc.css"></head><body><h1>AMIS Runtime Documentation</h1><p>This document describes all available function in the AMIS node API.</p><div>
+<p><strong>returnCurrentState()</strong></p>
+<p>This function in amis.js takes no parameters and returns the current batch state as a JavaScript object parsed from the JSON export, including placed and unplaced parts and batch information.</p>
+<p>It executes all queued commands before returning the state and queues the saved batch to be reopened on the next execute() call.</p>
+<p>See the <a href="json_export_format.html">JSON export format</a> for details of the returned data.</p>
+</div>
+<br/>
+<div>
 <p><strong>batch_create</strong></p>
 <p>Create a new empty batch with specified dimensions and settings.</p>
 <h3>Parameters</h3>
@@ -149,6 +156,11 @@
 <td>empty</td>
 </tr>
 </table>
+</div>
+<br/>
+<div>
+<p><strong>face_orient</strong></p>
+<p>In Part View, select a face to turn its outward normal down. A subsequent Z-axis rotation minimizes the bounding-box footprint of all models in the part, with the longer side along X (width >= depth). Escape or clicking Face Down again cancels picking.</p>
 </div>
 <br/>
 <div>

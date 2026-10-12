@@ -11,6 +11,7 @@ module.exports = {
 	batch_save_as:function(){addline(arguments.callee.name,arguments[0]);},
 	batch_settings_save:function(){addline(arguments.callee.name,arguments[0]);},
 	batch_unplaced:function(){addline(arguments.callee.name,arguments[0]);},
+	face_orient:function(){addline(arguments.callee.name,arguments[0]);},
 	link_hp_job_send:function(){addline(arguments.callee.name,arguments[0]);},
 	mesh_orient:function(){addline(arguments.callee.name,arguments[0]);},
 	nest_box_parts:function(){addline(arguments.callee.name,arguments[0]);},
@@ -84,4 +85,3 @@ function addline(pFunction,pParameters)
 {
 	mList+='{ "function": "'+pFunction+'", "parameters": '+JSON.stringify(pParameters)+' }\n';
 }
-
