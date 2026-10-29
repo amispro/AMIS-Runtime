@@ -67,7 +67,7 @@
 <br/>
 <div>
 <p><strong>batch_recover</strong></p>
-<p>This action allows you to recover a batch that has partially failed during printing by removing all parts that are completely below a specified height.</p>
+<p>Recover a partially failed print by removing instances that intersect the build area and are completely below the specified height. Parts without remaining instances are removed. The entire recovery is one undoable step.</p>
 <h3>Parameters</h3>
 <table>
 <tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
@@ -82,7 +82,7 @@
 <br/>
 <div>
 <p><strong>batch_resize</strong></p>
-<p>Resize the current batch to match the dimensions of a different printer.</p>
+<p>Resize the current batch to match the dimensions and output settings of a different printer as one undoable change.</p>
 <h3>Parameters</h3>
 <table>
 <tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
@@ -124,7 +124,7 @@
 <br/>
 <div>
 <p><strong>batch_settings_save</strong></p>
-<p>Save the output settings for this batch.</p>
+<p>Save the output settings for this batch as one undoable change, preserving its dimensions.</p>
 <h3>Parameters</h3>
 <table>
 <tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
@@ -184,8 +184,13 @@
 </div>
 <br/>
 <div>
+<p><strong>nest_apply_part_settings</strong></p>
+<p>Apply the batch's rotation permissions to all top-level parts after confirmation as one undoable change. Other part properties and group members are preserved.</p>
+</div>
+<br/>
+<div>
 <p><strong>nest_box_parts</strong></p>
-<p>This function will create a sinterbox around the currently selected parts.</p>
+<p>This function will create a sinterbox around the currently selected parts as one undoable change. Redo restores the retained box and layout without recalculation.</p>
 <h3>Parameters</h3>
 <table>
 <tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
@@ -236,17 +241,17 @@
 <br/>
 <div>
 <p><strong>nest_clear</strong></p>
-<p>This action will remove all unlocked parts from the build area, allowing you to start a fresh nesting session.</p>
+<p>This action will unplace all unlocked top-level instances as one undoable change, allowing you to start a fresh nesting session. Group members are preserved. Undo restores the original layout and rotations.</p>
 </div>
 <br/>
 <div>
 <p><strong>nest_delete_unplaced</strong></p>
-<p>This action will delete all the unplaced instances from the batch. Parts that have no placed instances at all will be removed as well.</p>
+<p>This action will delete all top-level instances that do not intersect the build box as one undoable change. Parts without remaining instances are removed as well. Group copies are treated as single instances; their members are preserved.</p>
 </div>
 <br/>
 <div>
 <p><strong>nest_execute</strong></p>
-<p>This action will arrange all parts inside the print box in an optimal way to minimize wasted space. The nesting algorithm will take into account the part dimensions, the specified gaps and the print bed dimensions. After nesting, all parts will be repositioned according to the calculated layout. Unplaced parts remain outside the buildbox.</p>
+<p>This action will arrange all parts inside the print box in an optimal way to minimize wasted space. The nesting algorithm will take into account the part dimensions, the specified gaps and the print bed dimensions. After nesting, all parts will be repositioned according to the calculated layout. Unplaced parts remain outside the buildbox. Consecutive solution updates form one undoable change until the nesting command is finalized.</p>
 <h3>Parameters</h3>
 <table>
 <tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
@@ -267,12 +272,12 @@
 <br/>
 <div>
 <p><strong>nest_lock</strong></p>
-<p>This action will lock the position of all parts that are currently placed inside the build box. Locked parts cannot be moved or modified until they are unlocked again. They will also stay in their current position if a new nesting operation is performed.</p>
+<p>This action will lock the position of all parts that are currently placed inside the build box as one undoable change. Locked parts cannot be moved or modified until they are unlocked again. They will also stay in their current position if a new nesting operation is performed.</p>
 </div>
 <br/>
 <div>
 <p><strong>nest_settings_save</strong></p>
-<p>Store the settings to use for the nesting operation, omitting a parameter will leave it unchanged.</p>
+<p>Store the settings to use for the nesting operation as one undoable change, preserving the batch dimensions. Omitting a parameter will leave it unchanged.</p>
 <h3>Parameters</h3>
 <table>
 <tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
@@ -324,12 +329,45 @@
 <td>Enable spreading of parts in the build box to reduce density</td>
 <td>false</td>
 </tr>
+<tr>
+<td>nest_allow_x_rotation</td>
+<td>bool</td>
+<td>Allow rotation around the X axis</td>
+<td>Current Value</td>
+</tr>
+<tr>
+<td>nest_allow_y_rotation</td>
+<td>bool</td>
+<td>Allow rotation around the Y axis</td>
+<td>Current Value</td>
+</tr>
+<tr>
+<td>nest_allow_z_rotation</td>
+<td>bool</td>
+<td>Allow rotation around the Z axis</td>
+<td>Current Value</td>
+</tr>
+</table>
+</div>
+<br/>
+<div>
+<p><strong>nest_unbox_parts</strong></p>
+<p>Removes the sinterbox and releases each group's non-box members, unplacing their unlocked instances. Multiple groups are unboxed as one undoable change; undo restores their boxes and original layouts.</p>
+<h3>Parameters</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
+<tr>
+<td>part_numbers</td>
+<td>array of strings</td>
+<td>Part numbers of the groups to unbox.</td>
+<td>[]</td>
+</tr>
 </table>
 </div>
 <br/>
 <div>
 <p><strong>nest_unlock</strong></p>
-<p>This action will unlock all parts that are currently locked in position inside the build box, allowing them to be moved again. Initiating a nesting will cause these parts to be renested as a consequence.</p>
+<p>This action will unlock all parts that are currently locked in position inside the build box as one undoable change, allowing them to be moved again. Initiating a nesting will cause these parts to be renested as a consequence.</p>
 </div>
 <br/>
 <div>
@@ -355,7 +393,7 @@
 <br/>
 <div>
 <p><strong>part_change_name</strong></p>
-<p>This action will change the name of the specified part or partgroup. When the id refers to a sub-part of a partgroup, only that sub-part is renamed.</p>
+<p>This action will change the name of the specified part or partgroup as an undoable change. When the id refers to a sub-part of a partgroup, only that sub-part is renamed.</p>
 <h3>Parameters</h3>
 <table>
 <tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
@@ -376,7 +414,7 @@
 <br/>
 <div>
 <p><strong>part_delete</strong></p>
-<p>Delete the specified part from the batch.</p>
+<p>Delete the specified part or instance from the batch through the undo history. Deleting multiple selected parts is grouped into one undo step.</p>
 <h3>Parameters</h3>
 <table>
 <tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
@@ -397,7 +435,7 @@
 <br/>
 <div>
 <p><strong>part_duplicate</strong></p>
-<p>This action will create a copy of the selected part. The new part will receive the same transformation and properties as the original part. It is possible to pass a new_part_number to the duplicated part to allow further operations on this part. If no new_part_number is given, one will be automatically assigned. When a new_part_number is specified and it is already in use, the duplicate will fail for that part.</p>
+<p>This action will create an undoable copy of the selected part. The new part will receive the same transformation and properties as the original part. It is possible to pass a new_part_number to the duplicated part to allow further operations on this part. If no new_part_number is given, one will be automatically assigned. When a new_part_number is specified and it is already in use, the duplicate will fail for that part. Duplicating multiple selected parts is grouped into one undo step.</p>
 <h3>Parameters</h3>
 <table>
 <tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
@@ -418,7 +456,7 @@
 <br/>
 <div>
 <p><strong>part_group</strong></p>
-<p>Groups all currently selected parts into a new PartGroup. The action is disabled when no parts are selected or when at least one selected part is already a group.</p>
+<p>Groups all currently selected parts into a new PartGroup as one undoable change. The action is disabled when no parts are selected or when at least one selected part is already a group.</p>
 <h3>Parameters</h3>
 <table>
 <tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
@@ -444,6 +482,12 @@
 <td><i>required</i></td>
 </tr>
 <tr>
+<td>file_list</td>
+<td>array</td>
+<td>File paths to import as one undo step, instead of file_path. Failed files are skipped.</td>
+<td></td>
+</tr>
+<tr>
 <td>part_number</td>
 <td>string</td>
 <td>The part number to assign to the imported part (optional)</td>
@@ -454,7 +498,7 @@
 <br/>
 <div>
 <p><strong>part_lock</strong></p>
-<p>This action will lock the position of all instances of the currently selected parts that are placed inside the build box. Locked parts cannot be moved or modified until they are unlocked again. They will also stay in their current position if a new nesting operation is performed.</p>
+<p>This action will lock the position of all instances of the currently selected parts that are placed inside the build box as one undoable change. Locked parts cannot be moved or modified until they are unlocked again. They will also stay in their current position if a new nesting operation is performed.</p>
 <h3>Parameters</h3>
 <table>
 <tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
@@ -469,7 +513,7 @@
 <br/>
 <div>
 <p><strong>part_priority</strong></p>
-<p>This action will set the nesting priority of the selected parts in a range of 0-100. Parts with a higher priority will be favored during the nesting process.</p>
+<p>This action will set the nesting priority of the selected parts in a range of 0-100 as an undoable change. Parts with a higher priority will be favored during the nesting process. Multiple selected parts are changed in one undo step. Omitting priority_value toggles between 100 and 50.</p>
 <h3>Parameters</h3>
 <table>
 <tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
@@ -490,7 +534,7 @@
 <br/>
 <div>
 <p><strong>part_repair</strong></p>
-<p>Runs the MeshHealer repair pipeline on every model of the selected part, attempting to turn its mesh(es) into a closed, watertight, 2-manifold mesh. If a mesh cannot be fully repaired, it is flagged for alpha-wrapping instead.</p>
+<p>Runs the MeshHealer repair pipeline on every model of the selected part, attempting to turn its mesh(es) into a closed, watertight, 2-manifold mesh. If a mesh cannot be fully repaired, it is flagged for alpha-wrapping instead. Changes are undoable; redo restores the retained meshes without recalculation.</p>
 </div>
 <br/>
 <div>
@@ -544,32 +588,32 @@
 <tr>
 <td>copies</td>
 <td>int</td>
-<td>The number of copies to create for this part (reducing it may remove instances of the part that are already placed) (optional)</td>
+<td>The target number of copies (minimum 1). Changes are undoable; reducing the count removes trailing instances, including placed ones (optional)</td>
 <td>1</td>
 </tr>
 <tr>
 <td>nest_gap</td>
 <td>double</td>
-<td>The gap to use when nesting this part (optional)</td>
-<td>4</td>
+<td>The finite gap in millimeters to use when nesting this part (optional, undoable)</td>
+<td>Current Value</td>
 </tr>
 <tr>
 <td>allow_x_rotation</td>
 <td>bool</td>
-<td>Allow rotation around the X axis when nesting (optional)</td>
-<td>false</td>
+<td>Allow rotation around the X axis when nesting (optional, undoable)</td>
+<td>Current Value</td>
 </tr>
 <tr>
 <td>allow_y_rotation</td>
 <td>bool</td>
-<td>Allow rotation around the Y axis when nesting (optional)</td>
-<td>false</td>
+<td>Allow rotation around the Y axis when nesting (optional, undoable)</td>
+<td>Current Value</td>
 </tr>
 <tr>
 <td>allow_z_rotation</td>
 <td>bool</td>
-<td>Allow rotation around the Z axis when nesting (optional)</td>
-<td>false</td>
+<td>Allow rotation around the Z axis when nesting (optional, undoable)</td>
+<td>Current Value</td>
 </tr>
 <tr>
 <td>instance_idx</td>
@@ -598,15 +642,15 @@
 <tr>
 <td>lock_position</td>
 <td>bool</td>
-<td>Lock the position of the instance to modify (optional, ignored if instance_idx not provided)</td>
-<td>false</td>
+<td>Lock the position of the instance to modify (optional, undoable, ignored if instance_idx not provided)</td>
+<td>Current Value</td>
 </tr>
 </table>
 </div>
 <br/>
 <div>
 <p><strong>part_shelling_execute</strong></p>
-<p>This action will create a shell around the selected part. You can specify the shell thickness and whether you want to add a lattice structure inside the shell for added strength.</p>
+<p>This action will create, replace or remove shelling on the selected part as one undoable change. You can specify the shell thickness and whether you want to add a lattice structure inside the shell for added strength. Redo restores the retained shell without recalculation.</p>
 <h3>Parameters</h3>
 <table>
 <tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
@@ -666,7 +710,7 @@
 <br/>
 <div>
 <p><strong>part_split</strong></p>
-<p>Splits the selected part into a new PartGroup, with one sub-part for each connected component (edge-connected set of triangles) found in the part's mesh. All instances of the original part are moved to the resulting group. If the part's mesh is already a single connected component, a dialog informs the user instead of performing the split.</p>
+<p>Splits the selected part into a new PartGroup, with one sub-part for each connected component (edge-connected set of triangles) found in the part's mesh. All instances of the original part are moved to the resulting group. If the part's mesh is already a single connected component, a dialog informs the user instead of performing the split. The split is one undoable change; redo restores the retained group without recalculation.</p>
 <h3>Parameters</h3>
 <table>
 <tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
@@ -681,7 +725,7 @@
 <br/>
 <div>
 <p><strong>part_ungroup</strong></p>
-<p>Dissolves all currently selected PartGroups, releasing each subpart back into the batch at its current world position. The action is disabled when no groups are selected.</p>
+<p>Dissolves all currently selected PartGroups, releasing each non-box subpart back into the batch with its existing instances. Multiple groups are ungrouped as one undoable change. The action is disabled when no groups are selected.</p>
 <h3>Parameters</h3>
 <table>
 <tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
@@ -696,7 +740,7 @@
 <br/>
 <div>
 <p><strong>part_unlock</strong></p>
-<p>This action will unlock all instances of the currently selected parts that are locked in position inside the build box, allowing them to be moved again. Initiating a nesting will cause these parts to be renested as a consequence.</p>
+<p>This action will unlock all instances of the currently selected parts that are locked in position inside the build box as one undoable change, allowing them to be moved again. Initiating a nesting will cause these parts to be renested as a consequence.</p>
 <h3>Parameters</h3>
 <table>
 <tr><th>Name</th><th>Type</th><th>Description</th><th>Default</th></tr>
