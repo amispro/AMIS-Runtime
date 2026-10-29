@@ -150,9 +150,15 @@ registerQueuedTool('batch_unplaced', 'Create a new batch containing all parts th
 
 registerQueuedTool('link_hp_job_send', 'Send the current batch to the assigned HP MJF printer. This call fails if the assigned printer is not an HP printer.', {});
 
+registerQueuedTool('mesh_face_orient', 'In Part View, select a face to turn its outward normal down, then rotate around the Z axis to minimize the bounding-box footprint of all models in the part, with the longer side along X.', {
+	part_number: z.string().describe('The part number of the part to orient')
+});
+
 registerQueuedTool('mesh_orient', 'Rotate the specified part so the volume of its axis aligned bounding box is as small as possible.', {
 	part_number: z.string().describe('The part number of the part to orient')
 });
+
+registerQueuedTool('nest_apply_part_settings', 'Apply the batch\'s rotation permissions to all top-level parts after confirmation. Other part properties and group members are preserved.', {});
 
 registerQueuedTool('nest_box_parts', 'Create a sinterbox around the currently selected parts.', {
 	part_numbers: z.array(z.string()).optional().describe('An array of part numbers to box (default: [])'),
@@ -183,7 +189,14 @@ registerQueuedTool('nest_settings_save', 'Store the settings to use for the nest
 	nest_layer_density_active: z.boolean().optional().describe('Enable layer density control (default: false)'),
 	nest_layer_density: z.number().optional().describe('The maximum layer density to allow, in % (default: 13.0)'),
 	nest_height_limit: z.number().optional().describe('The maximum height to use for nesting; 0 = use entire buildbox (default: 0.0)'),
-	nest_spread_parts: z.boolean().optional().describe('Enable spreading of parts in the build box to reduce density (default: false)')
+	nest_spread_parts: z.boolean().optional().describe('Enable spreading of parts in the build box to reduce density (default: false)'),
+	nest_allow_x_rotation: z.boolean().optional().describe('Allow rotation around the X axis (default: current value)'),
+	nest_allow_y_rotation: z.boolean().optional().describe('Allow rotation around the Y axis (default: current value)'),
+	nest_allow_z_rotation: z.boolean().optional().describe('Allow rotation around the Z axis (default: current value)')
+});
+
+registerQueuedTool('nest_unbox_parts', 'Remove the sinterbox and release each group\'s non-box members, unplacing their unlocked instances.', {
+	part_numbers: z.array(z.string()).optional().describe('Part numbers of the groups to unbox (default: [])')
 });
 
 registerQueuedTool('nest_unlock', 'Unlock all parts currently locked in position inside the build box, allowing them to be moved again during the next nesting operation.', {});
@@ -214,6 +227,7 @@ registerQueuedTool('part_group', 'Group all currently selected parts into a new 
 
 registerQueuedTool('part_import', 'Import one or more parts into the current build area from STL, STEP or 3MF files. Imported parts are automatically repaired and prepared for nesting. If part_number is already in use, the import will fail for that part.', {
 	file_path: z.string().describe('The file path of the part to import'),
+	file_list: z.array(z.string()).optional().describe('File paths to import as one undo step, instead of file_path. Failed files are skipped (default: [])'),
 	part_number: z.string().optional().describe('The part number to assign to the imported part (optional, auto-assigned if omitted)')
 });
 
